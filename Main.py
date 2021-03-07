@@ -141,7 +141,7 @@ def hysteresis(image, weak):
 path = 'C:/Users/eire1/Documents/College Year 4/Computer Vision/Orings/Oring'
 i = 1
 while True:
-    # read in images 1 by 1
+    # read in images 1 by 11
     img = cv.imread(path + str(i) + '.jpg',0)
     i =(i + 1)%15
     if i==0:
