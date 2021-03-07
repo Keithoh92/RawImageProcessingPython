@@ -60,35 +60,34 @@ def connected_component_labelling(img):
 
             if img[i][j] > 0:##if pixel is foreground pixel
 
-                ##always setting neighbouring img pixels to left and above to label_x and label_y 
+                ##always checking neighbouring img pixels to left and above 
                 label_x = labels[i][j-1] 
                 label_y = labels[i-1][j]
 
-                #if neighbouring pixels are foreground pixels
+                
                 if label_x > 0:
-                    if label_y > 0: 
-                        ##and pixels are not equal
+                    if label_y > 0:
+                        #if neighbouring pixels are foreground pixels 
+                        ##and if the pixels are not equal so maybe 1,0
                         if not label_x == label_y:
-                            ##keeping track of the foreground pixels label sets and subsets so we can connect them together
+                            ##traverse its connected components and label them appropriately depending on the labels they are connected to 
 
-                            labels[i][j] = min(label_x, label_y)#set new array pixel to be the minimum of the labels x & y
+                            labels[i][j] = min(label_x, label_y) #set current pixel to the minimum of neighbours
                             if max(label_x, label_y) not in label_conv[0]: 
-                                #if the max pixel of labels x(above) & y(left) is not already in the label_conversion array[0] add it 
+                                #if the max of above and left neighbours has not been visited in this 
+                                # current traversal keep track of max and min of neigbour labels in lists
                                 label_conv[0].append(max(label_x, label_y))
-                                #then add the smaller pixel of above and left pixel to the label_conversion array[1]
                                 label_conv[1].append(min(label_x,  label_y))
                             
-                            #else if the max of labels x & y has already been visited and stored in label_conversion array[0] get its index
-                            elif max(label_x, label_y) in label_conv[0]:
-                                ind = label_conv[0].index(max(label_x, label_y))
+                            
+                            elif max(label_x, label_y) in label_conv[0]:#else if we have visted those neighbours check their neighbours
+                                ind = label_conv[0].index(max(label_x, label_y))   
                                 
-                                #if label_conv[1][index] at label_conv[0][index] is greater than the smaller of the 2 pixels get that index of label_conv[1]
                                 if label_conv[1][ind] > min(label_x, label_y):
                                     l = label_conv[1][ind]
-                                    #change the pixel in label_conv[1][index] to be the smaller pixel
                                     label_conv[1][ind] = min(label_x, label_y)
 
-                                    #now we connect the components   
+                                    #we sort and ensure the pixels are connected by the correct labels   
                                     while l in label_conv[0] and count < 100:
                                         count += 1
                                         ind = label_conv[0].index(1)
@@ -98,16 +97,16 @@ def connected_component_labelling(img):
                                     label_conv[0].append(1)
                                     label_conv[1].append(min(label_x, label_y))
                         else:
-                            labels[i][j] = label_y
-                            #only x has a label
+                            labels[i][j] = label_y#if neighbours have the same label set pixel to that value 
+                    #only x has a label
                     else:
-                        labels[i][j] = label_x
+                        labels[i][j] = label_x#if only above pixel is labelled set curr pixel to the label of above pixel
                 #only y has a label
-                elif label_y > 0:
+                elif label_y > 0: #else if only left neighbour is labelled set pixel to same as label above
                     labels[i][j] = label_x
 
                 else:
-                    labels[i][j] = curlab
+                    labels[i][j] = curlab##else if pixel above and left is not labelled  set curren pixel to current label and increment curlab and move to next pixel
                     curlab += 1
 
     ###starting second pass#####
